@@ -1,11 +1,12 @@
-%form.form-inline.form-horizontal{:action => "/user/#{@user.id}/#{@user.secret}/add_music", :method => "post"}
-  .form-group
-    .input-group.col-xs-12
-      %input.form-control{:name => "spotify_uri", :placeholder => "Spotify URI", :type => "text"}
-      %span.input-group-btn{:style => "width:0px;"}
-      %input.form-control{:name => "tags", :placeholder => "Tags e.g. Vocal Jazz", :type => "text"}
-      %span.input-group-btn
-        %button.btn.btn-success{:type => "submit"} Add Music
+.text-center
+  %form.form-inline.form-horizontal{:action => "/user/#{@user.id}/#{@user.secret}/add_music", :method => "post"}
+    .form-group
+      .input-group.col-xs-12
+        %input.form-control{:name => "spotify_uri", :placeholder => "Spotify URI", :type => "text"}
+        %span.input-group-btn{:style => "width:0px;"}
+        %input.form-control{:name => "tags", :placeholder => "Tags e.g. Vocal Jazz", :type => "text"}
+        %span.input-group-btn
+          %button.btn.btn-success{:type => "submit"} Add Music
 %p
 -#%form.form-inline.form-horizontal{:action => "/user/#{@user.id}/#{@user.secret}/create_playlist", :method => "post"}
 -#  .form-group
@@ -14,29 +15,32 @@
 -#      %input{:name => "song_ids", :value => @songs.map{|s| s.id}.join(","), :type => "hidden"}
 -#      %span.input-group-btn
 -#        %button.btn.btn-success{:type => "submit"} Create Playlist
-%iframe{:allowtransparency => "true", :frameborder => "0", :height => "80", :width => "100%", :src => "https://embed.spotify.com/?uri=spotify:trackset:SpotiTag:#{@songs.map{|s| s.spotify_id}.join ','}"}
-%table.table
-  %thead
-    %tr
-      %th #
-      %th Name
-      %th Artist
-      %th Tags
-  %tbody
-    - @songs.each_with_index do |song, index|
-      %tr
-        %td{:scope => "row"}
-          %b=index + 1
-        %td=song.rspotify_track.name
-        %td=song.rspotify_track.artists.first.name
-        %td
-          %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/set_tags", :method => "post"}
-            .form-group
-              .input-group
-                %input.form-control.form-control-sm{:name => "tags", :placeholder => "Tags e.g. Slow Dance", :type => "text", :value => song.tags.join(" ")}
-                %span.input-group-btn
-                  %button.btn.btn-sm.btn-block.btn-success{:type => "submit"} Set
 - unless @songs.empty?
+  %iframe{:allowtransparency => "true", :frameborder => "0", :height => "80", :width => "100%", :src => "https://embed.spotify.com/?uri=spotify:trackset:SpotiTag:#{@songs.map{|s| s.spotify_id}.join ','}"}
+  %table.table
+    %thead
+      %tr
+        %th #
+        %th Name
+        %th Artist
+        %th Tags
+    %tbody
+      - @songs.each_with_index do |song, index|
+        %tr
+          %td{:scope => "row"}
+            %b=index + 1
+          %td=song.rspotify_track.name
+          %td=song.rspotify_track.artists.first.name
+          %td
+            %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/set_tags", :method => "post"}
+              .form-group
+                .input-group
+                  %input.form-control.form-control-sm{:name => "tags", :placeholder => "Tags e.g. Slow Dance", :type => "text", :value => song.tags.join(" ")}
+                  %span.input-group-btn
+                    %button.btn.btn-sm.btn-block.btn-success{:type => "submit"} Set
   %form{:action => "/user/#{@user.id}/#{@user.secret}/delete_songs", :method => "post"}
     %input.form-control.form-control-sm{:name => "song_ids", :type => "hidden", :value => @songs.map(&:id).join(";")}
     %button.btn.btn-danger.btn-block Remove songs from SpotiTag
+- else
+  .text-center
+    I could not find any songs for your Tag selection. Add some music for it above!
