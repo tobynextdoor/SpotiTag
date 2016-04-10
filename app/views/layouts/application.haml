@@ -11,13 +11,11 @@
   %body
     %nav.navbar.navbar-fixed-top.navbar-dark.bg-success.not-rounded
       .nav.navbar-nav
-        %a.nav-item.nav-link{:href => "/"}
-          %img.img-invert{:src => image_url('flaticon/home.png'), :style => "max-width: 26px;"}
         .nav-item
           .navbar-brand{:style => "font-weight: 300;"}
             =@title || "SpotiTag"
         - if @filterable
-          .nav-item
+          .nav-item.text-center{:style => "position:absolute"}
             %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}", :method => "get"}
               .form-group
                 .input-group
@@ -28,7 +26,7 @@
                     %button.btn.btn-primary{:type => "submit"} Filter
     .container{:style => "padding-top: 80px; padding-bottom: 50px;"}
       = yield
-    %nav.navbar.navbar-fixed-bottom.navbar-light.bg-faded.text-center{:style => "font-weight: 200;"}
+    %nav.navbar.navbar-fixed-bottom.navbar-light.bg-faded.text-center{:style => "font-weight: 300;"}
       %a.text-success{:href => "/about"} About
       %a.text-success{:href => "/terms", :style => "padding-left: 20px;"} Terms & Conditions
       %a.text-success{:href => "/privacy", :style => "padding-left: 20px;"} Privacy Policy
