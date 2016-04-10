@@ -4,8 +4,12 @@ require 'rspotify'
 class Song < ActiveRecord::Base
   belongs_to :user
 
+  def rspotify_track_cache
+    @@rspotify_track_cache ||= {}
+  end
+
   def rspotify_track
-    @rspotify_track ||= RSpotify::Track.find spotify_id
+    rspotify_track_cache[spotify_id] ||= RSpotify::Track.find spotify_id
   end
 
   def tags

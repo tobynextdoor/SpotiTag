@@ -24,6 +24,7 @@
       %input{:name => "song_ids", :value => @songs.map{|s| s.id}.join(","), :type => "hidden"}
       %span.input-group-btn
         %button.btn.btn-success{:type => "submit"} Create Playlist
+%iframe{:allowtransparency => "true", :frameborder => "0", :height => "80", :width => "100%", :src => "https://embed.spotify.com/?uri=spotify:trackset:SpotiTag:#{@songs.map{|s| s.spotify_id}.join ','}"}
 %table.table
   %thead
     %tr
@@ -31,7 +32,6 @@
       %th Name
       %th Artist
       %th Tags
-      -#%th Player
   %tbody
     - @songs.each_with_index do |song, index|
       %tr
@@ -47,6 +47,4 @@
                 %input.form-control{:name => "tags", :placeholder => "Tag1, Tag2", :type => "text"}
                 %span.input-group-btn
                   %button.btn.btn-block.btn-success{:type => "submit"} Add
-        -#%td
-          -#%iframe{:allowtransparency => "true", :frameborder => "0", :height => "80", :width => "80", :src => "https://embed.spotify.com/?uri=#{song.url_encoded_spotify_uri}"}
-%a.btn.btn-danger.btn-block{:href => "/user/#{@user.secret}/#{@user.id}/song/all/delete"} Delete all Songs
+%a.btn.btn-danger.btn-block{:href => "/user/#{@user.id}/#{@user.secret}/song/all/delete"} Delete all Songs
