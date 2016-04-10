@@ -24,6 +24,18 @@ class ApplicationController < ActionController::Base
     else
       @songs = @user.songs_by_tags(@tags)
     end
+
+    songs_to_be_fetched = @songs.reject(&:rspotify_track_is_cached?).
+      map{|s| [s.spotify_id, s]}.
+      to_h
+    songs_ids_fetch = songs_to_be_fetched.keys
+    unless songs_ids_fetch.empty?
+      songs_ids_fetch.each_slice(50).to_a.each do |song_ids|
+        RSpotify::Track.find(song_ids).each do |track|
+          Song.rspotify_track_cache[track.id] = track
+        end
+      end
+    end
   end
 
   def add_tags
