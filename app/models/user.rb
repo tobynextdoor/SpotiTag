@@ -7,17 +7,23 @@ class User < ActiveRecord::Base
     user
   end
 
-  def create_song(spotify_id, tags)
-    songs.create(
-      :spotify_id => spotify_id,
-      :tags_string => tags.join(";")
-    )
+  def add_song(spotify_id, tags)
+    if songs.where(:spotify_id => spotify_id).empty?
+      songs.create(
+        :spotify_id => spotify_id,
+        :tags_string => tags.join(";")
+      )
+    end
   end
 
-  def songs_for_tags(tags)
+  def songs_by_tags(tags)
     songs.all.select do |song|
       (tags - song.tags).empty?
     end
+  end
+
+  def songs_without_tags
+    songs.where(:tags_string => "")
   end
 
   def tags
