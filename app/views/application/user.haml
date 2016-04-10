@@ -1,29 +1,19 @@
-%form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/add_music", :method => "post"}
+%form.form-inline.form-horizontal{:action => "/user/#{@user.id}/#{@user.secret}/add_music", :method => "post"}
   .form-group
-    .input-group
+    .input-group.col-xs-12
       %input.form-control{:name => "spotify_uri", :placeholder => "Spotify URI", :type => "text"}
       %span.input-group-btn{:style => "width:0px;"}
-      %input.form-control{:name => "tags", :placeholder => "Tag1 Tag2", :type => "text"}
+      %input.form-control{:name => "tags", :placeholder => "Tags e.g. Vocal Jazz", :type => "text"}
       %span.input-group-btn
         %button.btn.btn-success{:type => "submit"} Add Music
 %p
-%form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}", :method => "get"}
-  .form-group
-    .input-group
-      %span.input-group-btn
-        %a.btn.btn-primary{:href => "/user/#{@user.id}/#{@user.secret}"} All
-      %span.input-group-btn
-        %a.btn.btn-warning{:href => "/user/#{@user.id}/#{@user.secret}?tags=[[none]]"} No Tags
-      %input.form-control{:name => "tags", :placeholder => "Tag1 Tag2", :type => "text", :value => @input_tags}
-      %span.input-group-btn
-        %button.btn.btn-primary{:type => "submit"} Filter
-%form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/create_playlist", :method => "post"}
-  .form-group
-    .input-group
-      %input.form-control{:name => "playlist_name", :placeholder => "Playlist Name", :type => "text"}
-      %input{:name => "song_ids", :value => @songs.map{|s| s.id}.join(","), :type => "hidden"}
-      %span.input-group-btn
-        %button.btn.btn-success{:type => "submit"} Create Playlist
+-#%form.form-inline.form-horizontal{:action => "/user/#{@user.id}/#{@user.secret}/create_playlist", :method => "post"}
+-#  .form-group
+-#    .input-group.col-xs-12
+-#      %input.form-control{:name => "playlist_name", :placeholder => "Playlist Name", :type => "text"}
+-#      %input{:name => "song_ids", :value => @songs.map{|s| s.id}.join(","), :type => "hidden"}
+-#      %span.input-group-btn
+-#        %button.btn.btn-success{:type => "submit"} Create Playlist
 %iframe{:allowtransparency => "true", :frameborder => "0", :height => "80", :width => "100%", :src => "https://embed.spotify.com/?uri=spotify:trackset:SpotiTag:#{@songs.map{|s| s.spotify_id}.join ','}"}
 %table.table
   %thead
@@ -40,11 +30,10 @@
         %td=song.rspotify_track.name
         %td=song.rspotify_track.artists.first.name
         %td
-          =song.tags.join ", "
-          %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/add_tags", :method => "post"}
+          %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/set_tags", :method => "post"}
             .form-group
               .input-group
-                %input.form-control{:name => "tags", :placeholder => "Tag1 Tag2", :type => "text"}
+                %input.form-control.form-control-sm{:name => "tags", :placeholder => "Tags e.g. Slow Dance", :type => "text", :value => song.tags.join(" ")}
                 %span.input-group-btn
-                  %button.btn.btn-block.btn-success{:type => "submit"} Add
+                  %button.btn.btn-sm.btn-block.btn-success{:type => "submit"} Set
 %a.btn.btn-danger.btn-block{:href => "/user/#{@user.id}/#{@user.secret}/song/all/delete"} Delete all Songs

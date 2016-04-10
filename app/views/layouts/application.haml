@@ -9,5 +9,22 @@
     %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"}
     %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}/
   %body
-    .container
+    %nav.navbar.navbar-dark.bg-success.not-rounded
+      .nav.navbar-nav
+        %a.nav-item.nav-link{:href => "/"}
+          %img.img-invert{:src => image_url('flaticon/home.png'), :style => "max-width: 26px;"}
+        .nav-item
+          .navbar-brand{:style => "font-weight: 300;"}
+            =@title || "SpotiTag"
+        - if @filterable
+          .nav-item
+            %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}", :method => "get"}
+              .form-group
+                .input-group
+                  -#%span.input-group-btn
+                  -#  %a.btn.btn-warning{:href => "/user/#{@user.id}/#{@user.secret}?tags=[[none]]"} No Tags
+                  %input.form-control{:name => "tags", :placeholder => "Tags e.g. Summer Pop Fun", :type => "text", :value => @input_tags, :style => "width: 400px"}
+                  %span.input-group-btn
+                    %button.btn.btn-primary{:type => "submit"} Filter
+    .container{:style => "padding-top: 10px; padding-bottom: 50px;"}
       = yield

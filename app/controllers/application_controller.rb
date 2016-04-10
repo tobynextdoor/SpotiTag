@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user
+    @filterable = true
     @user = fetch_user params[:user_id], params[:user_secret]
 
     @input_tags = params[:tags] || ""
@@ -38,11 +39,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def add_tags
+  def set_tags
     user = fetch_user params[:user_id], params[:user_secret]
     song = user.songs.find params[:song_id]
 
-    song.add_tags params[:tags].split(" ")
+    song.add_tags params[:tags].split(" "), true
 
     redirect_to "/user/#{user.id}/#{user.secret}"
   end

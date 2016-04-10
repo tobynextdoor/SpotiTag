@@ -27,7 +27,10 @@ class Song < ActiveRecord::Base
     end
   end
 
-  def add_tags(tags)
+  def add_tags(tags, remove_old = false)
+    if remove_old
+      self.tags_string = ""
+    end
     tags.each{|tag| add_tag tag}
   end
 
