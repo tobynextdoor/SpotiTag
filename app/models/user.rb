@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  serialize :rspotify_hash
   has_many :songs, dependent: :destroy, autosave: true
 
   def self.new_def(spotify_id, rspotify_hash)

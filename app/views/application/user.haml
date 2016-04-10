@@ -17,6 +17,13 @@
       %input.form-control{:name => "tags", :placeholder => "Tag1, Tag2", :type => "text", :value => @input_tags}
       %span.input-group-btn
         %button.btn.btn-primary{:type => "submit"} Filter
+%form.form-inline{:action => "/user/#{@user.id}/create_playlist", :method => "post"}
+  .form-group
+    .input-group
+      %input.form-control{:name => "playlist_name", :placeholder => "Playlist Name", :type => "text"}
+      %input{:name => "song_ids", :value => @songs.map{|s| s.id}.join(","), :type => "hidden"}
+      %span.input-group-btn
+        %button.btn.btn-success{:type => "submit"} Create Playlist
 %table.table
   %thead
     %tr
@@ -30,8 +37,8 @@
       %tr
         %td{:scope => "row"}
           %b=index + 1
-        %td=song.info.name
-        %td=song.info.artists.first.name
+        %td=song.rspotify_track.name
+        %td=song.rspotify_track.artists.first.name
         %td
           =song.tags.join ", "
           %form.form-inline{:action => "/user/#{@user.id}/song/#{song.id}/add_tags", :method => "post"}

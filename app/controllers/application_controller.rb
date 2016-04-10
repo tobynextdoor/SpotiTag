@@ -71,6 +71,21 @@ class ApplicationController < ActionController::Base
     redirect_to "/user/#{user.id}"
   end
 
+  def create_playlist
+    user = User.find params[:user_id]
+    playlist_name = params[:playlist_name]
+    song_ids = params[:song_ids].split ","
+
+    tracks = song_ids.map{|s| user.songs.find(s).rspotify_track}
+
+    playlist = user.rspotify_user.create_playlist!(playlist_name)
+    unless tracks.empty?
+      playlist.add_tracks! tracks
+    end
+
+    redirect_to "/user/#{user.id}"
+  end
+
   def spotify_callback
     spotify_user = RSpotify::User.new(request.env['omniauth.auth'])
     spotify_id = spotify_user.id
