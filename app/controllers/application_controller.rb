@@ -89,6 +89,16 @@ class ApplicationController < ActionController::Base
     redirect_to "/user/#{user.id}/#{user.secret}"
   end
 
+  def delete_option
+    @user = fetch_user params[:user_id], params[:user_secret]
+  end
+
+  def delete
+    user = fetch_user params[:user_id], params[:user_secret]
+    user.destroy
+    redirect_to "/"
+  end
+
   def spotify_callback
     spotify_user = RSpotify::User.new(request.env['omniauth.auth'])
     spotify_id = spotify_user.id
@@ -96,7 +106,7 @@ class ApplicationController < ActionController::Base
     if user.nil?
       user = User.new_def(spotify_id, spotify_user.to_hash)
     end
-    redirect_to "/user/#{user.id}/#{user.secret}"
+    redirect_to "/user/#{user.id}/#{user.secret}/delete_option"
   end
 
   def fetch_user(user_id, user_secret)
