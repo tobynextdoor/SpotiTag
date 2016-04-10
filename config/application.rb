@@ -22,5 +22,7 @@ module SpotiTag
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+
+    RSpotify::authenticate("aa71623452a3451380304c833ccd5aef", "98cf23b224e54063996e8d1d5d42d2d9")
   end
 end

@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user
-    @user = User.find params[:user_id]
+    @user = User.find(params[:user_id])
     @input_tags = params[:tags] || ""
     @tags = @input_tags.delete(' ').split ","
     if @input_tags == "[[none]]"
@@ -68,11 +68,16 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    #spotify:track:7a86XRg84qjasly9f6bPSD
-    #spotify:album:7ykWEOYdt8gyA4seOlwtWK
-    #spotify:artist:1pBuKaLHJlIlqYxQQaflve
-    #spotify:user:it0by:playlist:4TDVGZi3w3UJhO0dlUZRQY
+    redirect_to "/user/#{user.id}"
+  end
 
+  def spotify_callback
+    spotify_user = RSpotify::User.new(request.env['omniauth.auth'])
+    spotify_id = spotify_user.id
+    user = User.where(:spotify_id => spotify_id).first
+    if user.nil?
+      user = User.new_def(spotify_id, spotify_user.to_hash)
+    end
     redirect_to "/user/#{user.id}"
   end
 end

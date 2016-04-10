@@ -1,10 +1,14 @@
 class User < ActiveRecord::Base
   has_many :songs, dependent: :destroy, autosave: true
 
-  def self.new_def()
-    user = User.new(:tags_string => "")
+  def self.new_def(spotify_id, rspotify_hash)
+    user = User.new(:spotify_id => spotify_id, :rspotify_hash => rspotify_hash, :tags_string => "")
     user.save
     user
+  end
+
+  def rspotify_user
+    @rspotify_user ||= RSpotify::User.new(rspotify_hash)
   end
 
   def add_song(spotify_id, tags)
