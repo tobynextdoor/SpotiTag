@@ -48,12 +48,10 @@ class ApplicationController < ActionController::Base
     redirect_to "/user/#{user.id}/#{user.secret}"
   end
 
-  def delete_song
+  def delete_songs
     user = fetch_user params[:user_id], params[:user_secret]
-    song_id = params[:song_id]
-    if song_id == "all"
-      user.songs.destroy_all
-    end
+    song_ids = params[:song_ids].split ";"
+    Song.where(:id => song_ids).destroy_all
 
     redirect_to "/user/#{user.id}/#{user.secret}"
   end

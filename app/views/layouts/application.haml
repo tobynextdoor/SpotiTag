@@ -9,7 +9,7 @@
     %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"}
     %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}/
   %body
-    %nav.navbar.navbar-dark.bg-success.not-rounded
+    %nav.navbar.navbar-fixed-top.navbar-dark.bg-success.not-rounded
       .nav.navbar-nav
         %a.nav-item.nav-link{:href => "/"}
           %img.img-invert{:src => image_url('flaticon/home.png'), :style => "max-width: 26px;"}
@@ -26,5 +26,9 @@
                   %input.form-control{:name => "tags", :placeholder => "Tags e.g. Summer Pop Fun", :type => "text", :value => @input_tags, :style => "width: 400px"}
                   %span.input-group-btn
                     %button.btn.btn-primary{:type => "submit"} Filter
-    .container{:style => "padding-top: 10px; padding-bottom: 50px;"}
+    .container{:style => "padding-top: 80px; padding-bottom: 50px;"}
       = yield
+    %nav.navbar.navbar-fixed-bottom.navbar-light.bg-faded.text-center{:style => "font-weight: 200;"}
+      %a.text-success{:href => "/about"} About
+      %a.text-success{:href => "/terms", :style => "padding-left: 20px;"} Terms & Conditions
+      %a.text-success{:href => "/privacy", :style => "padding-left: 20px;"} Privacy Policy

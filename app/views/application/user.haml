@@ -36,4 +36,7 @@
                 %input.form-control.form-control-sm{:name => "tags", :placeholder => "Tags e.g. Slow Dance", :type => "text", :value => song.tags.join(" ")}
                 %span.input-group-btn
                   %button.btn.btn-sm.btn-block.btn-success{:type => "submit"} Set
-%a.btn.btn-danger.btn-block{:href => "/user/#{@user.id}/#{@user.secret}/song/all/delete"} Delete all Songs
+- unless @songs.empty?
+  %form{:action => "/user/#{@user.id}/#{@user.secret}/delete_songs", :method => "post"}
+    %input.form-control.form-control-sm{:name => "song_ids", :type => "hidden", :value => @songs.map(&:id).join(";")}
+    %button.btn.btn-danger.btn-block Remove songs from SpotiTag
