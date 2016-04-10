@@ -1,3 +1,5 @@
+%a{:href => "/"}
+  %span.label.label-danger{:style => "position:absolute;"} Logout
 .text-center
   %form.form-inline.form-horizontal{:action => "/user/#{@user.id}/#{@user.secret}/add_music", :method => "post"}
     .form-group
