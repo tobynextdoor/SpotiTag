@@ -1,9 +1,11 @@
 require 'rspotify'
 
+class LoginException < StandardError
+end
+
 class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
+  rescue_from LoginException, :with => :redirect_exception
 
   def index
     user_id = params[:user_id]
@@ -13,7 +15,8 @@ class ApplicationController < ActionController::Base
   end
 
   def user
-    @user = User.find(params[:user_id])
+    @user = fetch_user params[:user_id], params[:user_secret]
+
     @input_tags = params[:tags] || ""
     @tags = @input_tags.delete(' ').split ","
     if @input_tags == "[[none]]"
@@ -24,26 +27,26 @@ class ApplicationController < ActionController::Base
   end
 
   def add_tags
-    user = User.find params[:user_id]
+    user = fetch_user params[:user_id], params[:user_secret]
     song = user.songs.find params[:song_id]
 
     song.add_tags params[:tags].delete(' ').split(",")
 
-    redirect_to "/user/#{user.id}"
+    redirect_to "/user/#{user.id}/#{user.secret}"
   end
 
   def delete_song
-    user = User.find params[:user_id]
+    user = fetch_user params[:user_id], params[:user_secret]
     song_id = params[:song_id]
     if song_id == "all"
       user.songs.destroy_all
     end
 
-    redirect_to "/user/#{user.id}"
+    redirect_to "/user/#{user.id}/#{user.secret}"
   end
 
   def add_music
-    user = User.find params[:user_id]
+    user = fetch_user params[:user_id], params[:user_secret]
     tags = params[:tags].delete(' ').split(",")
     spotify_uri = params[:spotify_uri].split(":")
     type = spotify_uri[1]
@@ -68,11 +71,11 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    redirect_to "/user/#{user.id}"
+    redirect_to "/user/#{user.id}/#{user.secret}"
   end
 
   def create_playlist
-    user = User.find params[:user_id]
+    user = fetch_user params[:user_id], params[:user_secret]
     playlist_name = params[:playlist_name]
     song_ids = params[:song_ids].split ","
 
@@ -83,7 +86,7 @@ class ApplicationController < ActionController::Base
       playlist.add_tracks! tracks
     end
 
-    redirect_to "/user/#{user.id}"
+    redirect_to "/user/#{user.id}/#{user.secret}"
   end
 
   def spotify_callback
@@ -93,6 +96,18 @@ class ApplicationController < ActionController::Base
     if user.nil?
       user = User.new_def(spotify_id, spotify_user.to_hash)
     end
-    redirect_to "/user/#{user.id}"
+    redirect_to "/user/#{user.id}/#{user.secret}"
+  end
+
+  def fetch_user(user_id, user_secret)
+    user = User.where(:id => user_id, :secret => user_secret).first
+    if user.nil?
+      raise LoginException.new
+    end
+    user
+  end
+
+  def redirect_exception(exception)
+    redirect_to "/" unless performed?
   end
 end

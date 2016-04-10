@@ -1,4 +1,4 @@
-%form.form-inline{:action => "/user/#{@user.id}/add_music", :method => "post"}
+%form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/add_music", :method => "post"}
   .form-group
     .input-group
       %input.form-control{:name => "spotify_uri", :placeholder => "Spotify URI", :type => "text"}
@@ -7,17 +7,17 @@
       %span.input-group-btn
         %button.btn.btn-success{:type => "submit"} Add Music
 %p
-%form.form-inline{:action => "/user/#{@user.id}", :method => "get"}
+%form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}", :method => "get"}
   .form-group
     .input-group
       %span.input-group-btn
-        %a.btn.btn-primary{:href => "/user/#{@user.id}"} All
+        %a.btn.btn-primary{:href => "/user/#{@user.id}/#{@user.secret}"} All
       %span.input-group-btn
-        %a.btn.btn-warning{:href => "/user/#{@user.id}?tags=[[none]]"} No Tags
+        %a.btn.btn-warning{:href => "/user/#{@user.id}/#{@user.secret}?tags=[[none]]"} No Tags
       %input.form-control{:name => "tags", :placeholder => "Tag1, Tag2", :type => "text", :value => @input_tags}
       %span.input-group-btn
         %button.btn.btn-primary{:type => "submit"} Filter
-%form.form-inline{:action => "/user/#{@user.id}/create_playlist", :method => "post"}
+%form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/create_playlist", :method => "post"}
   .form-group
     .input-group
       %input.form-control{:name => "playlist_name", :placeholder => "Playlist Name", :type => "text"}
@@ -41,7 +41,7 @@
         %td=song.rspotify_track.artists.first.name
         %td
           =song.tags.join ", "
-          %form.form-inline{:action => "/user/#{@user.id}/song/#{song.id}/add_tags", :method => "post"}
+          %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/add_tags", :method => "post"}
             .form-group
               .input-group
                 %input.form-control{:name => "tags", :placeholder => "Tag1, Tag2", :type => "text"}
@@ -49,4 +49,4 @@
                   %button.btn.btn-block.btn-success{:type => "submit"} Add
         -#%td
           -#%iframe{:allowtransparency => "true", :frameborder => "0", :height => "80", :width => "80", :src => "https://embed.spotify.com/?uri=#{song.url_encoded_spotify_uri}"}
-%a.btn.btn-danger.btn-block{:href => "/user/#{@user.id}/song/all/delete"} Delete all Songs
+%a.btn.btn-danger.btn-block{:href => "/user/#{@user.secret}/#{@user.id}/song/all/delete"} Delete all Songs

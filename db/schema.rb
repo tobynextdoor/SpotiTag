@@ -26,7 +26,8 @@ ActiveRecord::Schema.define(version: 20160409172105) do
   create_table "users", force: :cascade do |t|
     t.string   "spotify_id"
     t.text     "rspotify_hash"
-    t.string   "tags_string"
+    t.string   "secret"
+    t.text     "tags_string"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
   end

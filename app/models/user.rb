@@ -3,7 +3,11 @@ class User < ActiveRecord::Base
   has_many :songs, dependent: :destroy, autosave: true
 
   def self.new_def(spotify_id, rspotify_hash)
-    user = User.new(:spotify_id => spotify_id, :rspotify_hash => rspotify_hash, :tags_string => "")
+    user = User.new(
+      :spotify_id => spotify_id,
+      :rspotify_hash => rspotify_hash,
+      :secret => SecureRandom.hex,
+      :tags_string => "")
     user.save
     user
   end
