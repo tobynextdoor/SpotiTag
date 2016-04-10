@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
 
   def songs_by_tags(tags)
     songs.all.select do |song|
-      (tags - song.tags).empty?
+      (tags.map(&:downcase) - song.tags.map(&:downcase)).empty?
     end
   end
 

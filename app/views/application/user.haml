@@ -3,7 +3,7 @@
     .input-group
       %input.form-control{:name => "spotify_uri", :placeholder => "Spotify URI", :type => "text"}
       %span.input-group-btn{:style => "width:0px;"}
-      %input.form-control{:name => "tags", :placeholder => "Tag1, Tag2", :type => "text"}
+      %input.form-control{:name => "tags", :placeholder => "Tag1 Tag2", :type => "text"}
       %span.input-group-btn
         %button.btn.btn-success{:type => "submit"} Add Music
 %p
@@ -14,7 +14,7 @@
         %a.btn.btn-primary{:href => "/user/#{@user.id}/#{@user.secret}"} All
       %span.input-group-btn
         %a.btn.btn-warning{:href => "/user/#{@user.id}/#{@user.secret}?tags=[[none]]"} No Tags
-      %input.form-control{:name => "tags", :placeholder => "Tag1, Tag2", :type => "text", :value => @input_tags}
+      %input.form-control{:name => "tags", :placeholder => "Tag1 Tag2", :type => "text", :value => @input_tags}
       %span.input-group-btn
         %button.btn.btn-primary{:type => "submit"} Filter
 %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/create_playlist", :method => "post"}
@@ -44,7 +44,7 @@
           %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/add_tags", :method => "post"}
             .form-group
               .input-group
-                %input.form-control{:name => "tags", :placeholder => "Tag1, Tag2", :type => "text"}
+                %input.form-control{:name => "tags", :placeholder => "Tag1 Tag2", :type => "text"}
                 %span.input-group-btn
                   %button.btn.btn-block.btn-success{:type => "submit"} Add
 %a.btn.btn-danger.btn-block{:href => "/user/#{@user.id}/#{@user.secret}/song/all/delete"} Delete all Songs

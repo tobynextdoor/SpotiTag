@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
     @user = fetch_user params[:user_id], params[:user_secret]
 
     @input_tags = params[:tags] || ""
-    @tags = @input_tags.delete(' ').split ","
+    @tags = @input_tags.split " "
     if @input_tags == "[[none]]"
       @songs = @user.songs_without_tags
     else
@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
     user = fetch_user params[:user_id], params[:user_secret]
     song = user.songs.find params[:song_id]
 
-    song.add_tags params[:tags].delete(' ').split(",")
+    song.add_tags params[:tags].split(" ")
 
     redirect_to "/user/#{user.id}/#{user.secret}"
   end
@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
 
   def add_music
     user = fetch_user params[:user_id], params[:user_secret]
-    tags = params[:tags].delete(' ').split(",")
+    tags = params[:tags].split(" ")
     spotify_uri = params[:spotify_uri].split(":")
     type = spotify_uri[1]
     if type == "track"
