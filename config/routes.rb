@@ -9,6 +9,10 @@ Rails.application.routes.draw do
   post 'user/:user_id/:user_secret/add_music' => 'application#add_music'
   post 'user/:user_id/:user_secret/create_playlist' => 'application#create_playlist'
 
+  get '/about' => 'application#about'
+  get '/terms' => 'application#terms'
+  get '/privacy' => 'application#privacy'
+
   get '/auth/spotify/callback', to: 'application#spotify_callback'
 
   get '*path' => redirect('/')
