@@ -78,7 +78,7 @@ class ApplicationController < ActionController::Base
     elsif spotify_uri.length == 5 && spotify_uri[3] == "playlist"
       playlist = RSpotify::Playlist.find spotify_uri[2], spotify_uri[4]
       playlist.tracks.each do |track|
-        user.add_song track.id, tags
+        user.add_song track.id, tags unless track.id.nil?
       end
     end
 
