@@ -106,7 +106,7 @@ class ApplicationController < ActionController::Base
     if user.nil?
       user = User.new_def(spotify_id, spotify_user.to_hash)
     end
-    redirect_to "/user/#{user.id}/#{user.secret}/delete_option"
+    redirect_to "/user/#{user.id}/#{user.secret}"
   end
 
   def fetch_user(user_id, user_secret)
