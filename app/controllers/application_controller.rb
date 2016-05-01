@@ -74,6 +74,27 @@ class ApplicationController < ActionController::Base
     redirect_to "/user/#{user.id}/#{user.secret}"
   end
 
+  def add_tag
+    user = fetch_user params[:user_id], params[:user_secret]
+    if (song = Song.find(params[:song_id]))
+      if (tag = Tag.find(params[:tag_id]))
+        song.tag_it tag, user
+      end
+    end
+
+    redirect_to "/user/#{user.id}/#{user.secret}"
+  end
+
+  def remove_tagging
+    user = fetch_user params[:user_id], params[:user_secret]
+    tagging_id = params[:tagging_id]
+    if (tagging = Tagging.find(tagging_id)).user == user
+      tagging.destroy
+    end
+
+    redirect_to "/user/#{user.id}/#{user.secret}"
+  end
+
   def create_playlist
     user = fetch_user params[:user_id], params[:user_secret]
     playlist_name = params[:playlist_name]

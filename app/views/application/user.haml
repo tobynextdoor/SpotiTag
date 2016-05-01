@@ -38,7 +38,15 @@
               -if tag.is_system_tag?
                 %span.label.label-info=tag.name
               -else
-                %span.label.label-success=tag.name
+                %span.label.label-success
+                  =tag.name
+                  -if (tagging = Tagging.find_specific song, @user, tag)
+                    %a{:href => "/user/#{@user.id}/#{@user.secret}/tagging/#{tagging.id}/remove"}
+                      %img{:src => image_url('flaticon/cross-mark-on-a-black-circle-background.png'), :style => "max-width: 15px;"}
+                  -else
+                    %a{:href => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/tag/#{tag.id}/add"}
+                      %img{:src => image_url('flaticon/plus-sign-in-a-black-circle.png'), :style => "max-width: 15px;"}
+
 -#            %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/set_tags", :method => "post"}
 -#              .form-group
 -#                .input-group

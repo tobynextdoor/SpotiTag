@@ -4,8 +4,8 @@ Rails.application.routes.draw do
   get 'user/:user_id/:user_secret' => 'application#user'
   get 'user/:user_id/:user_secret/delete_option' => 'application#delete_option'
   get 'user/:user_id/:user_secret/delete' => 'application#delete'
-  post 'user/:user_id/:user_secret/song/:song_id/set_tags' => 'application#set_tags'
-  post 'user/:user_id/:user_secret/delete_songs' => 'application#delete_songs'
+  get 'user/:user_id/:user_secret/tagging/:tagging_id/remove' => 'application#remove_tagging'
+  get 'user/:user_id/:user_secret/song/:song_id/tag/:tag_id/add' => 'application#add_tag'
   post 'user/:user_id/:user_secret/add_music' => 'application#add_music'
   post 'user/:user_id/:user_secret/create_playlist' => 'application#create_playlist'
 

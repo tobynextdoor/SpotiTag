@@ -8,6 +8,7 @@ class Tag < ActiveRecord::Base
     :album => "album:",
     :artist => "artist:"
   }
+  @@popular_tag_threshold = 0.5
 
   def self.by_name(tag_name)
     tag_name = "__#{tag_name}" if Tag.is_system_tag_name? tag_name
@@ -36,6 +37,10 @@ class Tag < ActiveRecord::Base
 
   def self.artist_tag(tag_name)
     Tag.raw_by_name "#{@@system_prefixes[:artist]}#{tag_name}"
+  end
+
+  def self.popular_tag_threshold
+    @@popular_tag_threshold
   end
 
   def is_system_tag?
