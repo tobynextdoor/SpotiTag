@@ -1,7 +1,8 @@
 require 'cgi'
 require 'rspotify'
-
+#http://railscasts.com/episodes/47-two-many-to-many?autoplay=true
 class Song < ActiveRecord::Base
+  serialize :tags_hash
   belongs_to :user
 
   def self.rspotify_track_cache
@@ -16,22 +17,29 @@ class Song < ActiveRecord::Base
     !Song.rspotify_track_cache[spotify_id].nil?
   end
 
-  def tags
-    tags_string.split ";"
-  end
+  def tags(only_id, min_amount = 1)
+    valid_tags = tags_hash.select do |tag_id, amount|
+      amount >= min_amount
+    end
 
-  def add_tag(tag_name)
-    unless tags.include? tag_name
-      self.tags_string = (tags << tag_name).join ";"
-      save
+    if only_id
+      valid_tags.map{|tag_id, amount| tag_id}
+    else
+      valid_tags
     end
   end
 
-  def add_tags(tags, remove_old = false)
+  def add_tag(tag_id, should_save = true)
+    tags_hash[tag_id] = (tags_hash[tag_id] || 0) + 1
+    save if should_save
+  end
+
+  def add_tags(tag_ids, remove_old = false)
     if remove_old
-      self.tags_string = ""
+      self.tags_hash = {}
     end
-    tags.each{|tag| add_tag tag}
+    tag_ids.each{|tag_id| add_tag tag_id, false}
+    save
   end
 
   def spotify_uri

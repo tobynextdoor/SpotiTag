@@ -1,13 +1,14 @@
 class User < ActiveRecord::Base
   serialize :rspotify_hash
   has_many :songs, dependent: :destroy, autosave: true
+  has_many :tags, dependent: :destroy, autosave: true
 
   def self.new_def(spotify_id, rspotify_hash)
     user = User.new(
       :spotify_id => spotify_id,
       :rspotify_hash => rspotify_hash,
       :secret => SecureRandom.hex,
-      :tags_string => "")
+      :tags_hash => {})
     user.save
     user
   end
@@ -19,25 +20,29 @@ class User < ActiveRecord::Base
   def add_song(spotify_id, tags)
     if songs.where(:spotify_id => spotify_id).empty?
       songs.create(
-        :spotify_id => spotify_id,
-        :tags_string => tags.join(";")
-      )
+        :spotify_id => spotify_id
+      ).add_tags tags
     end
   end
 
-  def songs_by_tags(tags)
-    songs.all.select do |song|
-      (tags.map(&:downcase) - song.tags.map(&:downcase)).empty?
+  def add_tag(spotify_id, tags)
+    if songs.where(:spotify_id => spotify_id).empty?
+      songs.create(
+        :spotify_id => spotify_id
+      ).add_tags tags
     end
   end
+
+  #def songs_by_tags(tags)
+  #  songs.all.select do |song|
+  #    (tags.map(&:downcase) - song.tags.map(&:downcase)).empty?
+  #  end
+  #end
 
   def songs_without_tags
-    songs.where(:tags_string => "")
+    songs.where(:tags_hash => {})
   end
 
-  def tags
-    tags_string.split ";"
-  end
 
   def add_tag(tag_name)
     update(:tags_string => (tags << tag_name).join(";"))
