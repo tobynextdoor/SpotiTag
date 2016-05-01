@@ -32,10 +32,13 @@
           %td{:scope => "row"}
             %b=index + 1
           %td=song.name
-          %td=song.artist
+          %td=song.artists.join ", "
           %td
             - song.tags_counts.map{|tag, count| tag}.each do |tag|
-              %span.label.label-success=tag
+              -if tag.is_system_tag?
+                %span.label.label-info=tag.name
+              -else
+                %span.label.label-success=tag.name
 -#            %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/set_tags", :method => "post"}
 -#              .form-group
 -#                .input-group
