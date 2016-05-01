@@ -21,9 +21,12 @@
                 .input-group
                   -#%span.input-group-btn
                   -#  %a.btn.btn-warning{:href => "/user/#{@user.id}/#{@user.secret}?tags=[[none]]"} No Tags
-                  %input.form-control{:name => "tags", :placeholder => "Tags e.g. Fun Summer Pop", :type => "text", :value => @input_tags, :style => "width: 400px"}
+                  %input.form-control{:name => "tags", :placeholder => "Tags e.g. Fun Summer Pop", :type => "text", :value => @input_tags.join(","), :style => "width: 400px"}
                   %span.input-group-btn
                     %button.btn.btn-primary{:type => "submit"} Filter
+                - unless @query_duration.nil?
+                  %label="Query: #{@query_duration}ms"
+
     .container{:style => "padding-top: 80px; padding-bottom: 50px;"}
       = yield
     %nav.navbar.navbar-fixed-bottom.navbar-light.bg-faded.text-center{:style => "font-weight: 300;"}

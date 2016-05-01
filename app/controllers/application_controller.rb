@@ -18,67 +18,56 @@ class ApplicationController < ActionController::Base
     @filterable = true
     @user = fetch_user params[:user_id], params[:user_secret]
 
-    @input_tags = params[:tags] || ""
-    @tags = @input_tags.split " "
-    if @input_tags == "[[none]]"
-      @songs = @user.songs_without_tags
-    else
-      @songs = @user.songs_by_tags(@tags)
-    end
+    @input_tags = (params[:tags] || "").split(",").map(&:strip)
+    unless @input_tags.empty?
+      start_time = Time.now.nsec
+      @tags = Tag.where("lower(name) IN (?)", @input_tags.map(&:downcase)).to_a
 
-    songs_to_be_fetched = @songs.reject(&:rspotify_track_is_cached?).
-      map{|s| [s.spotify_id, s]}.
-      to_h
-    songs_ids_fetch = songs_to_be_fetched.keys
-    unless songs_ids_fetch.empty?
-      songs_ids_fetch.each_slice(50).to_a.each do |song_ids|
-        RSpotify::Track.find(song_ids).each do |track|
-          Song.rspotify_track_cache[track.id] = track
-        end
+      if @input_tags.count == @tags.count
+        tag_ids = @tags.map(&:id)
+        @songs = Song.joins(:tags).where('tags.id IN (?)', tag_ids).group("songs.id").having("COUNT(songs.id) >= ?", tag_ids.length)
+        #maybe consider looking at http://www.monkeyandcrow.com/blog/tagging_with_active_record_and_postgres/
+
+        #starting_tag = @tags.shift
+        #@songs = @tags.inject(starting_tag.songs) do |songs, tag|
+        #  songs & tag.songs
+        #end
       end
+      @query_duration = (Time.now.nsec - start_time) / 1000000
     end
-  end
-
-  def set_tags
-    user = fetch_user params[:user_id], params[:user_secret]
-    song = user.songs.find params[:song_id]
-
-    song.add_tags params[:tags].split(" "), true
-
-    redirect_to "/user/#{user.id}/#{user.secret}"
-  end
-
-  def delete_songs
-    user = fetch_user params[:user_id], params[:user_secret]
-    song_ids = params[:song_ids].split ";"
-    Song.where(:id => song_ids).destroy_all
-
-    redirect_to "/user/#{user.id}/#{user.secret}"
+    @songs ||= []
   end
 
   def add_music
     user = fetch_user params[:user_id], params[:user_secret]
-    tags = params[:tags].split(" ")
+    tags = params[:tags].split(",").map(&:strip).map do |tag_name|
+      Tag.by_name tag_name
+    end
+
     spotify_uri = params[:spotify_uri].split(":")
     type = spotify_uri[1]
-    if type == "track"
-      user.add_song spotify_uri[2], tags
+
+    song_spotify_ids = if type == "track"
+      [spotify_uri[2]]
     elsif type == "album"
       album = RSpotify::Album.find spotify_uri[2]
-      album.tracks.each do |track|
-        user.add_song track.id, tags
-      end
+      album.tracks.map(&:id)
     elsif type == "artist"
       artist = RSpotify::Artist.find spotify_uri[2]
       artist.albums.each do |album|
-        album.tracks.each do |track|
-          user.add_song track.id, tags
-        end
-      end
+        album.tracks.map(&:id)
+      end.flatten
     elsif spotify_uri.length == 5 && spotify_uri[3] == "playlist"
       playlist = RSpotify::Playlist.find spotify_uri[2], spotify_uri[4]
-      playlist.tracks.each do |track|
-        user.add_song track.id, tags unless track.id.nil?
+      playlist.tracks.map(&:id)
+    else
+      []
+    end.reject(&:nil?)
+
+    song_spotify_ids.each do |song_spotify_id|
+      song = Song.by_spotify_id song_spotify_id
+      tags.each do |tag|
+        song.tag_it tag, user
       end
     end
 

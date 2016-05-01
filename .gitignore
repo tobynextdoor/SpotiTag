@@ -12,3 +12,5 @@
 !/log/.keep
 /tmp
 *.sqlite3
+passwords.rb
+

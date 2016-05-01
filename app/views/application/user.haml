@@ -31,15 +31,18 @@
         %tr
           %td{:scope => "row"}
             %b=index + 1
-          %td=song.rspotify_track.name
-          %td=song.rspotify_track.artists.first.name
+          %td=song.name
+          %td=song.artist
           %td
-            %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/set_tags", :method => "post"}
-              .form-group
-                .input-group
-                  %input.form-control.form-control-sm{:name => "tags", :placeholder => "Tags e.g. Slow Dance", :type => "text", :value => song.tags.join(" ")}
-                  %span.input-group-btn
-                    %button.btn.btn-sm.btn-block.btn-success{:type => "submit"} Set
+            - song.tags_counts.map{|tag, count| tag}.each do |tag|
+              %span.label.label-success=tag
+-#            %form.form-inline{:action => "/user/#{@user.id}/#{@user.secret}/song/#{song.id}/set_tags", :method => "post"}
+-#              .form-group
+-#                .input-group
+-#                  %input.form-control.form-control-sm{:name => "tags", :placeholder => "Tags e.g. Slow Dance", :type => "text", :value => song.tags.join(" ")}
+  -#                %span.input-group-btn
+    -#                %button.btn.btn-sm.btn-block.btn-success{:type => "submit"} Set
+      -#    }
   %form{:action => "/user/#{@user.id}/#{@user.secret}/delete_songs", :method => "post"}
     %input.form-control.form-control-sm{:name => "song_ids", :type => "hidden", :value => @songs.map(&:id).join(";")}
     %button.btn.btn-danger.btn-block Remove songs from SpotiTag

@@ -23,6 +23,11 @@ module SpotiTag
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 
+    if ENV['RAILS_ENV'] == 'development'
+        require_relative 'passwords'
+        Passwords.apply
+    end
+
     RSpotify::authenticate(ENV['SPOTIFY_CLIENT_ID'], ENV['SPOTIFY_CLIENT_SECRET'])
   end
 end

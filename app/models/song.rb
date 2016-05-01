@@ -1,52 +1,53 @@
-require 'cgi'
-require 'rspotify'
-#http://railscasts.com/episodes/47-two-many-to-many?autoplay=true
 class Song < ActiveRecord::Base
-  serialize :tags_hash
-  belongs_to :user
+  has_many :taggings
+  has_many :users, :through => :taggings
+  has_many :tags, :through => :taggings
 
-  def self.rspotify_track_cache
-    @@rspotify_track_cache ||= {}
-  end
+  def self.by_spotify_id(spotify_id)
+    song = Song.find_by(:spotify_id => spotify_id)
 
-  def rspotify_track
-    Song.rspotify_track_cache[spotify_id]
-  end
-
-  def rspotify_track_is_cached?
-    !Song.rspotify_track_cache[spotify_id].nil?
-  end
-
-  def tags(only_id, min_amount = 1)
-    valid_tags = tags_hash.select do |tag_id, amount|
-      amount >= min_amount
+    if song.nil?
+      rspotify_track = RSpotify::Track.find spotify_id
+      unless rspotify_track.nil?
+        song = Song.new(:spotify_id => spotify_id)
+        song.save
+        name_tag = Tag.by_name "name:#{rspotify_track.name}"
+        album_tag = Tag.by_name "album:#{rspotify_track.album.name}"
+        artist_tags = rspotify_track.artists.map do |artist|
+          Tag.by_name "artist:#{artist.name}"
+        end
+        (artist_tags << album_tag << name_tag).each do |tag|
+          song.tag_it tag, User.system
+        end
+      end
     end
 
-    if only_id
-      valid_tags.map{|tag_id, amount| tag_id}
-    else
-      valid_tags
-    end
+    song
   end
 
-  def add_tag(tag_id, should_save = true)
-    tags_hash[tag_id] = (tags_hash[tag_id] || 0) + 1
-    save if should_save
+  def tag_it(tag, user)
+    taggings.where(:user => user, :tag => tag).first_or_create
   end
 
-  def add_tags(tag_ids, remove_old = false)
-    if remove_old
-      self.tags_hash = {}
-    end
-    tag_ids.each{|tag_id| add_tag tag_id, false}
-    save
+  def tag_by_prefix(prefix)
+    tags.where("name LIKE :prefix", prefix: "#{prefix}%")
   end
 
-  def spotify_uri
-    "spotify:track:#{spotify_id}"
+  def name
+    tag_by_prefix("name:").first.name.split(":")[1]
   end
 
-  def url_encoded_spotify_uri
-    CGI.escape spotify_uri
+  def album
+    tag_by_prefix("album:").first.name.split(":")[1]
+  end
+
+  def artist
+    tag_by_prefix("artist:").map{|a| a.name.split(":")[1]}.join ", "
+  end
+
+  def tags_counts
+    @tags ||= taggings.group_by{ |g| g.tag.name }.map do |tag_name, tag_taggings|
+      [tag_name, tag_taggings.count]
+    end.to_h
   end
 end
